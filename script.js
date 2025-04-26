@@ -3,7 +3,8 @@ let secondNumber = '';
 let currentOperator = null;
 let shouldResetDisplay = false;
 
-const display = document.getElementById('display');
+const mainDisplay = document.getElementById('main-display');
+const operationDisplay = document.getElementById('operation-display');
 const numberButtons = document.querySelectorAll('[data-number]');
 const operatorButtons = document.querySelectorAll('[data-operator]');
 const clearButton = document.querySelector('[data-action="clear"]');
@@ -43,15 +44,15 @@ numberButtons.forEach(button =>
 );
 
 function appendNumber(number){
-    if(display.textContent === '0' || shouldResetDisplay) resetDisplay();
+    if(mainDisplay.textContent === '0' || shouldResetDisplay) resetDisplay();
+    
+    if(number === '.' && mainDisplay.textContent.includes('.')) return;
 
-    if(number === '.' && display.textContent.includes('.')) return;
-
-    display.textContent += number;
+    mainDisplay.textContent += number;
 }
 
 function resetDisplay(){
-    display.textContent = '';
+    mainDisplay.textContent = '';
     shouldResetDisplay = false;
 }
 
@@ -61,8 +62,9 @@ operatorButtons.forEach(button =>
 
 function setOperator(operator){
     if(currentOperator !== null) evaluate();
-    firstNumber = display.textContent;
+    firstNumber = parseFloat(mainDisplay.textContent);
     currentOperator = operator;
+    operationDisplay.textContent = `${firstNumber} ${currentOperator}`;
     shouldResetDisplay = true;
 }
 
@@ -70,22 +72,25 @@ equalButton.addEventListener('click', evaluate);
 
 function evaluate(){
     if(currentOperator === null || shouldResetDisplay) return;
-    secondNumber = display.textContent;
+    secondNumber = mainDisplay.textContent;
     const result = operate(currentOperator, firstNumber, secondNumber);
-    display.textContent = typeof result === "number" ? roundResult(result) : result;
+    mainDisplay.textContent = typeof result === "number" ? roundResult(result) : result;
     currentOperator = null;
+    operationDisplay.textContent = '';
 }
 
 clearButton.addEventListener('click', clear);
 
 function clear(){
-    display.textContent = '0';
+    mainDisplay.textContent = '0';
     firstNumber = '';
     secondNumber = '';
     currentOperator = null;
     shouldResetDisplay = false;
+    operationDisplay.textContent = '';
 }
 
 backspaceButton.addEventListener('click', () => {
-    display.textContent = display.textContent.slice(0, -1) || '0';
+    if(shouldResetDisplay) return;
+    mainDisplay.textContent = mainDisplay.textContent.slice(0, -1) || '0';
 });

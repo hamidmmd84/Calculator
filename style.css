@@ -53,3 +53,16 @@ body{
 .zero{
     grid-column: span 2;
 }
+
+#operation-display{
+    font-size: 18px;
+    color: gray;
+    text-align: right;
+    min-height: 20px;
+}
+
+#main-display{
+    font-size: 36px;
+    font-weight: bold;
+    text-align: right;
+}
